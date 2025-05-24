@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Professor Agent</title>
+ <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+    header {
+      text-align: center;
+      font-size: 28px;
+      padding: 20px;
+      font-weight: bold;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .hidden { display: none; }
+    .location {
+      padding: 20px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+    }
+    .location::before {
+      content: "\1F4CD";
+      margin-right: 10px;
+    }
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+    }
+    .card {
+      background-color: white;
+      width: 280px;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .card h3, .card p { margin: 5px 0; }
+    .profile-icon {
+      font-size: 40px;
+      margin: 15px 0;
+    }
+    .button-group .button,
+    .btn,
+    .back-btn,
+    .ai-section button {
+      padding: 8px 12px;
+      margin: 0 5px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.2s ease;
+    }
+    .button-group .button:hover,
+    .btn:hover,
+    .back-btn:hover,
+    .ai-section button:hover {
+      box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
+    }
+    .button-group .button:active,
+    .btn:active,
+    .back-btn:active,
+    .ai-section button:active {
+      transform: scale(0.97);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2) inset;
+    }
+    .view { background-color: #ccc; color: white; }
+    .alert { background-color: #a61717; color: white; }
+    .dashboard {
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      background-color: #e6e6e6;
+    }
+    .admin-card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      flex: 1 1 200px;
+      max-width: 300px;
+      min-width: 200px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    .admin-card h3, .admin-card p { margin: 5px 0; }
+    .icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+    .btn-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 10px 0;
+    }
+    .btn {
+      color: white;
+    }
+    .btn-green { background-color: #114911; }
+    .btn-dark-green { background-color: #0e3f0e; }
+    .btn-red { background-color: #8b1c1c; }
+    .back-btn {
+      margin: 10px 20px;
+      font-size: 14px;
+      padding: 8px 12px;
+      background-color: #666;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .ai-section {
+      margin: 20px auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 800px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    .ai-section h3 {
+      margin-top: 0;
+    }
+    .ai-section input, .ai-section select {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .ai-section button {
+      padding: 10px 20px;
+      background-color: #005a9c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 10px 5px;
+    }
+    .ai-output {
+      margin-top: 20px;
+      background: #f9f9f9;
+      border-left: 5px solid #005a9c;
+      padding: 15px;
+      border-radius: 5px;
+      min-height: 100px;
+    }
+    @media (max-width: 768px) {
+      .card-container, .dashboard { flex-direction: column; align-items: center; }
+    }
+  </style>
+
+</head>
+<body>
+  <header>Professor AI Agent</header>
+
+  <section id="card-view">
+    <div class="location">We make lives easier</div>
+    <div class="card-container">
+      <div class="card">
+        <h3>P.Agent_1</h3>
+        <p>09194586361</p>
+        <p>agent1@ai.system</p>
+        <div class="profile-icon">🤖</div>
+        <div class="button-group">
+          <button class="button view" onclick="showDashboard('Agent-1')">View Profile</button>
+          <button class="button alert">🚨</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>P.Agent_2</h3>
+        <p>09194586362</p>
+        <p>agent2@ai.system</p>
+        <div class="profile-icon">🤖</div>
+        <div class="button-group">
+          <button class="button view" onclick="showDashboard('Agent-2')">View Profile</button>
+          <button class="button alert">🚨</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>P.Agent_3</h3>
+        <p>09194586363</p>
+        <p>agent3@ai.system</p>
+        <div class="profile-icon">🤖</div>
+        <div class="button-group">
+          <button class="button view" onclick="showDashboard('Agent-3')">View Profile</button>
+          <button class="button alert">🚨</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="dashboard-view" class="hidden">
+   
+
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div class="dashboard">
+      <div class="admin-card">
+        <div class="icon">🤖</div>
+        <h3 id="agent-name">P.Agent_1</h3>
+        <p>Web spider</p>
+      </div>
+    </div>
+
+    <div class="ai-section">
+      <h3>AI Trending Topic Crawler</h3>
+      <input type="text" id="topic" placeholder="Enter topic name...">
+      <label for="length">Blog Length:</label>
+      <select id="length">
+        <option value="short">Short</option>
+        <option value="medium" selected>Medium</option>
+        <option value="long">Long</option>
+      </select>
+      <label for="tone">Tone:</label>
+      <select id="tone">
+        <option value="professional" selected>Professional</option>
+        <option value="casual">Casual</option>
+        <option value="funny">Funny</option>
+        <option value="motivational">Motivational</option>
+      </select>
+      <button onclick="runCrawler()">Run</button>
+      <div class="ai-output" id="aiOutput">
+        <em>Results will appear here...</em>
+      </div>
+    </div>
+
+    <div class="ai-output hidden" id="blogOutput" style="margin-top: 30px;">
+      <h3>📝 Blog Written by P.agent_2</h3>
+      <div id="blogContent"><em>Waiting for blog content...</em></div>
+    </div>
+  </section>
+
+  <script>
+    let currentAgent = "";
+    let lastBlogData = null;
+
+    function showDashboard(agentName) {
+      currentAgent = agentName;
+      document.getElementById('card-view').classList.add('hidden');
+      document.getElementById('dashboard-view').classList.remove('hidden');
+      document.getElementById('agent-name').innerText = agentName;
+
+      const blogSection = document.getElementById("blogOutput");
+      const blogContent = document.getElementById("blogContent");
+
+      if (agentName === "Agent-2" && lastBlogData) {
+        blogSection.classList.remove("hidden");
+        blogContent.innerHTML = `<pre style="white-space: pre-wrap;">${lastBlogData}</pre>`;
+      } else {
+        blogSection.classList.add("hidden");
+        blogContent.innerHTML = "";
+      }
+    }
+
+    function goBack() {
+      document.getElementById('dashboard-view').classList.add('hidden');
+      document.getElementById('card-view').classList.remove('hidden');
+    }
+
+    function runCrawler() {
+      const topic = document.getElementById("topic").value;
+      const output = document.getElementById("aiOutput");
+      output.innerHTML = "";
+
+      if (!topic) {
+        output.innerHTML = '<span style="color:red;">Please enter a topic.</span>';
+        return;
+      }
+
+      if (currentAgent === "Agent-1") {
+        output.innerHTML = `<strong>Fetching live trends for:</strong> "${topic}"...`;
+
+        fetch(`http://127.0.0.1:8000/get-topics?niche=${encodeURIComponent(topic)}`)
+          .then(res => res.json())
+          .then(data => {
+            if (Array.isArray(data)) {
+              window.recentTopics = data;
+              output.innerHTML = "<h4>Trending Topics:</h4><ul>" + data.map((item, index) =>
+                `<li><strong>${item.title}</strong><br>
+                <em>${item.summary}</em><br>
+                ${item.reason_trending}<br>
+                <a href="${item.source_link}" target="_blank">Read more</a><br>
+                <button onclick="sendToAgent2(${index})">Send to Agent-2</button>
+                 <button onclick="downloadTopicsCSV()">Download as CSV</button></li><br>`
+              ).join('') + "</ul>";
+            } else {
+              output.innerHTML = `<span style=\"color:red;\">Error: ${data.error || "Unknown error"}</span>`;
+            }
+          })
+          .catch(err => {
+            output.innerHTML = `<span style=\"color:red;\">Failed to fetch topics. ${err.message}</span>`;
+          });
+      } else {
+        output.innerHTML = `<em>This agent does not support live trend crawling.</em>`;
+      }
+    }
+
+    function sendToAgent2(index) {
+      const topic = window.recentTopics[index];
+      const length = document.getElementById("length").value;
+      const tone = document.getElementById("tone").value;
+
+      const blogContainer = document.getElementById("blogContent");
+      const blogSection = document.getElementById("blogOutput");
+
+      blogSection.classList.remove("hidden");
+      blogContainer.innerHTML = "✍️ Agent-2 is writing the blog...";
+
+      fetch("http://127.0.0.1:8001/generate-blog", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...topic, length, tone })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.blog) {
+          lastBlogData = data.blog;
+          blogContainer.innerHTML = `<pre style="white-space: pre-wrap;">${data.blog}</pre>`;
+        } else {
+          blogContainer.innerHTML = `<span style=\"color:red;\">Error: ${data.error || "Unknown error from Agent-2"}</span>`;
+        }
+      })
+      .catch(err => {
+        blogContainer.innerHTML = `<span style=\"color:red;\">Failed to generate blog: ${err.message}</span>`;
+      });
+    }
+  </script>
+  <script>
+function downloadTopicsCSV() {
+  const topic = document.getElementById("topic")?.value || "trending_topics";
+  const output = document.getElementById("aiOutput");
+  const items = Array.from(output.querySelectorAll("li"));
+  if (items.length === 0) {
+    alert("No data to download. Please run the crawler first.");
+    return;
+  }
+
+  let csv = "Title,Summary,Reason Trending,Link\n";
+  items.forEach(li => {
+    const lines = li.innerText.split("\n").map(l => `"${l.replace(/"/g, '""')}"`);
+    csv += lines.join(",") + "\n";
+  });
+
+  const blob = new Blob([csv], { type: "text/csv" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `${topic.replace(/\s+/g, '_')}_trends.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+</script>
+
+</body>
+</html>
