@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Professor Agent</title>
- <style>
+  <style>
     * { box-sizing: border-box; }
     body {
       font-family: Arial, sans-serif;
@@ -50,30 +50,13 @@
       font-size: 40px;
       margin: 15px 0;
     }
-    .button-group .button,
-    .btn,
-    .back-btn,
-    .ai-section button {
+    .button-group .button {
       padding: 8px 12px;
       margin: 0 5px;
       border: none;
       border-radius: 4px;
       font-size: 14px;
       cursor: pointer;
-      transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.2s ease;
-    }
-    .button-group .button:hover,
-    .btn:hover,
-    .back-btn:hover,
-    .ai-section button:hover {
-      box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
-    }
-    .button-group .button:active,
-    .btn:active,
-    .back-btn:active,
-    .ai-section button:active {
-      transform: scale(0.97);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2) inset;
     }
     .view { background-color: #ccc; color: white; }
     .alert { background-color: #a61717; color: white; }
@@ -100,19 +83,6 @@
       font-size: 40px;
       margin-bottom: 10px;
     }
-    .btn-container {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin: 10px 0;
-    }
-    .btn {
-      color: white;
-    }
-    .btn-green { background-color: #114911; }
-    .btn-dark-green { background-color: #0e3f0e; }
-    .btn-red { background-color: #8b1c1c; }
     .back-btn {
       margin: 10px 20px;
       font-size: 14px;
@@ -163,11 +133,9 @@
       .card-container, .dashboard { flex-direction: column; align-items: center; }
     }
   </style>
-
 </head>
 <body>
   <header>Professor Agents</header>
-
   <section id="card-view">
     <div class="location">We make lives easier</div>
     <div class="card-container">
@@ -205,17 +173,14 @@
   </section>
 
   <section id="dashboard-view" class="hidden">
-   
-
     <button class="back-btn" onclick="goBack()">← Back</button>
     <div class="dashboard">
       <div class="admin-card">
         <div class="icon">🤖</div>
-        <h3 id="agent-name">P.Agent_1</h3>
-        <p>Web spider</p>
+        <h3 id="agent-name">Agent</h3>
+        <p>Role shown here</p>
       </div>
     </div>
-
     <div class="ai-section">
       <h3>AI Trending Topic Crawler</h3>
       <input type="text" id="topic" placeholder="Enter topic name...">
@@ -237,133 +202,136 @@
         <em>Results will appear here...</em>
       </div>
     </div>
-
     <div class="ai-output hidden" id="blogOutput" style="margin-top: 30px;">
-      <h3>📝 Blog Written by P.agent_2</h3>
+      <h3>📝 Blog Written by Agent-2</h3>
       <div id="blogContent"><em>Waiting for blog content...</em></div>
+      <div style="margin-top: 10px;">
+        <button class="button view" onclick="sendToAgent3()">Send to Agent-3 (SEO + Fact Check)</button>
+      </div>
     </div>
   </section>
 
-  <script>
-    let currentAgent = "";
-    let lastBlogData = null;
+  <!-- JavaScript is already included below -->
+<script>
+let currentAgent = "";
+let lastBlogData = null;
 
-    function showDashboard(agentName) {
-      currentAgent = agentName;
-      document.getElementById('card-view').classList.add('hidden');
-      document.getElementById('dashboard-view').classList.remove('hidden');
-      document.getElementById('agent-name').innerText = agentName;
+function showDashboard(agentName) {
+  currentAgent = agentName;
+  document.getElementById('card-view').classList.add('hidden');
+  document.getElementById('dashboard-view').classList.remove('hidden');
+  document.getElementById('agent-name').innerText = agentName;
 
-      const blogSection = document.getElementById("blogOutput");
-      const blogContent = document.getElementById("blogContent");
+  const blogSection = document.getElementById("blogOutput");
+  const blogContent = document.getElementById("blogContent");
 
-      if (agentName === "Agent-2" && lastBlogData) {
-        blogSection.classList.remove("hidden");
-        blogContent.innerHTML = `<pre style="white-space: pre-wrap;">${lastBlogData}</pre>`;
-      } else {
-        blogSection.classList.add("hidden");
-        blogContent.innerHTML = "";
-      }
-    }
+  if (agentName === "Agent-2" && lastBlogData) {
+    blogSection.classList.remove("hidden");
+    blogContent.innerHTML = `<pre style="white-space: pre-wrap;">${lastBlogData}</pre>`;
+  } else {
+    blogSection.classList.add("hidden");
+    blogContent.innerHTML = "";
+  }
+}
 
-    function goBack() {
-      document.getElementById('dashboard-view').classList.add('hidden');
-      document.getElementById('card-view').classList.remove('hidden');
-    }
+function goBack() {
+  document.getElementById('dashboard-view').classList.add('hidden');
+  document.getElementById('card-view').classList.remove('hidden');
+}
 
-    function runCrawler() {
-      const topic = document.getElementById("topic").value;
-      const output = document.getElementById("aiOutput");
-      output.innerHTML = "";
-
-      if (!topic) {
-        output.innerHTML = '<span style="color:red;">Please enter a topic.</span>';
-        return;
-      }
-
-      if (currentAgent === "Agent-1") {
-        output.innerHTML = `<strong>Fetching live trends for:</strong> "${topic}"...`;
-
-        fetch(`http://127.0.0.1:8000/get-topics?niche=${encodeURIComponent(topic)}`)
-          .then(res => res.json())
-          .then(data => {
-            if (Array.isArray(data)) {
-              window.recentTopics = data;
-              output.innerHTML = "<h4>Trending Topics:</h4><ul>" + data.map((item, index) =>
-                `<li><strong>${item.title}</strong><br>
-                <em>${item.summary}</em><br>
-                ${item.reason_trending}<br>
-                <a href="${item.source_link}" target="_blank">Read more</a><br>
-                <button onclick="sendToAgent2(${index})">Send to Agent-2</button>
-                 <button onclick="downloadTopicsCSV()">Download as CSV</button></li><br>`
-              ).join('') + "</ul>";
-            } else {
-              output.innerHTML = `<span style=\"color:red;\">Error: ${data.error || "Unknown error"}</span>`;
-            }
-          })
-          .catch(err => {
-            output.innerHTML = `<span style=\"color:red;\">Failed to fetch topics. ${err.message}</span>`;
-          });
-      } else {
-        output.innerHTML = `<em>This agent does not support live trend crawling.</em>`;
-      }
-    }
-
-    function sendToAgent2(index) {
-      const topic = window.recentTopics[index];
-      const length = document.getElementById("length").value;
-      const tone = document.getElementById("tone").value;
-
-      const blogContainer = document.getElementById("blogContent");
-      const blogSection = document.getElementById("blogOutput");
-
-      blogSection.classList.remove("hidden");
-      blogContainer.innerHTML = "✍️ Agent-2 is writing the blog...";
-
-      fetch("http://127.0.0.1:8001/generate-blog", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...topic, length, tone })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success && data.blog) {
-          lastBlogData = data.blog;
-          blogContainer.innerHTML = `<pre style="white-space: pre-wrap;">${data.blog}</pre>`;
-        } else {
-          blogContainer.innerHTML = `<span style=\"color:red;\">Error: ${data.error || "Unknown error from Agent-2"}</span>`;
-        }
-      })
-      .catch(err => {
-        blogContainer.innerHTML = `<span style=\"color:red;\">Failed to generate blog: ${err.message}</span>`;
-      });
-    }
-  </script>
-  <script>
-function downloadTopicsCSV() {
-  const topic = document.getElementById("topic")?.value || "trending_topics";
+function runCrawler() {
+  const topic = document.getElementById("topic").value;
   const output = document.getElementById("aiOutput");
-  const items = Array.from(output.querySelectorAll("li"));
-  if (items.length === 0) {
-    alert("No data to download. Please run the crawler first.");
+  output.innerHTML = "";
+
+  if (!topic) {
+    output.innerHTML = '<span style="color:red;">Please enter a topic.</span>';
     return;
   }
 
-  let csv = "Title,Summary,Reason Trending,Link\n";
-  items.forEach(li => {
-    const lines = li.innerText.split("\n").map(l => `"${l.replace(/"/g, '""')}"`);
-    csv += lines.join(",") + "\n";
-  });
+  if (currentAgent === "Agent-1") {
+    output.innerHTML = `<strong>Fetching live trends for:</strong> "${topic}"...`;
 
-  const blob = new Blob([csv], { type: "text/csv" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = `${topic.replace(/\s+/g, '_')}_trends.csv`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+    fetch(`http://127.0.0.1:8000/get-topics?niche=${encodeURIComponent(topic)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          window.recentTopics = data;
+          output.innerHTML = "<h4>Trending Topics:</h4><ul>" + data.map((item, index) =>
+            `<li><strong>${item.title}</strong><br>
+            <em>${item.summary}</em><br>
+            ${item.reason_trending}<br>
+            <a href="${item.source_link}" target="_blank">Read more</a><br>
+            <button onclick="sendToAgent2(${index})">Send to Agent-2</button></li><br>`
+          ).join('') + "</ul>";
+        } else {
+          output.innerHTML = `<span style='color:red;'>Error: ${data.error || "Unknown error"}</span>`;
+        }
+      })
+      .catch(err => {
+        output.innerHTML = `<span style='color:red;'>Failed to fetch topics. ${err.message}</span>`;
+      });
+  } else {
+    output.innerHTML = `<em>This agent does not support live trend crawling.</em>`;
+  }
+}
+
+function sendToAgent2(index) {
+  const topic = window.recentTopics[index];
+  const length = document.getElementById("length").value;
+  const tone = document.getElementById("tone").value;
+
+  const blogContainer = document.getElementById("blogContent");
+  const blogSection = document.getElementById("blogOutput");
+
+  blogSection.classList.remove("hidden");
+  blogContainer.innerHTML = "✍️ Agent-2 is writing the blog...";
+
+  fetch("http://127.0.0.1:8001/generate-blog", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...topic, length, tone })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success && data.blog) {
+      lastBlogData = data.blog;
+      blogContainer.innerHTML = `<pre style="white-space: pre-wrap;">${data.blog}</pre>`;
+    } else {
+      blogContainer.innerHTML = `<span style='color:red;'>Error: ${data.error || "Unknown error from Agent-2"}</span>`;
+    }
+  })
+  .catch(err => {
+    blogContainer.innerHTML = `<span style='color:red;'>Failed to generate blog: ${err.message}</span>`;
+  });
+}
+
+function sendToAgent3() {
+  if (!lastBlogData) {
+    alert("No blog content available. Please run Agent-2 first.");
+    return;
+  }
+
+  const blogContainer = document.getElementById("blogContent");
+  blogContainer.innerHTML = "🔍 Agent-3 is reviewing the blog...";
+
+  fetch("http://127.0.0.1:8002/improve-blog", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ blog: lastBlogData })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && data.result) {
+        blogContainer.innerHTML = `<pre style="white-space: pre-wrap;">${data.result}</pre>`;
+      } else {
+        blogContainer.innerHTML = `<span style='color:red;'>Error: ${data.error || "Unknown error from Agent-3"}</span>`;
+      }
+    })
+    .catch(err => {
+      blogContainer.innerHTML = `<span style='color:red;'>Failed to improve blog: ${err.message}</span>`;
+    });
 }
 </script>
-
 </body>
 </html>
