@@ -209,6 +209,11 @@
         <button class="button view" onclick="sendToAgent3()">Send to Agent-3 (SEO + Fact Check)</button>
       </div>
     </div>
+    <div class="ai-output hidden" id="seoOutput" style="margin-top: 30px;">
+  <h3>🔍 SEO + Fact Checked by Agent-3</h3>
+  <div id="seoContent"><em>Waiting for Agent-3 result...</em></div>
+</div>
+
   </section>
 
   <!-- JavaScript is already included below -->
@@ -312,8 +317,11 @@ function sendToAgent3() {
     return;
   }
 
-  const blogContainer = document.getElementById("blogContent");
-  blogContainer.innerHTML = "🔍 Agent-3 is reviewing the blog...";
+const seoSection = document.getElementById("seoOutput");
+const seoContent = document.getElementById("seoContent");
+seoSection.classList.remove("hidden");
+seoContent.innerHTML = "🔍 Agent-3 is reviewing the blog...";
+
 
   fetch("http://127.0.0.1:8002/improve-blog", {
     method: "POST",
@@ -323,7 +331,7 @@ function sendToAgent3() {
     .then(res => res.json())
     .then(data => {
       if (data.success && data.result) {
-        blogContainer.innerHTML = `<pre style="white-space: pre-wrap;">${data.result}</pre>`;
+      seoContent.innerHTML = `<pre style="white-space: pre-wrap;">${data.result}</pre>`;
       } else {
         blogContainer.innerHTML = `<span style='color:red;'>Error: ${data.error || "Unknown error from Agent-3"}</span>`;
       }
