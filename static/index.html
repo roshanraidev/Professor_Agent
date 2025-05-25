@@ -169,9 +169,24 @@
           <button class="button alert">🚨</button>
         </div>
       </div>
+      <div class="card">
+        <h3>P.Agent_4</h3>
+        <p>09194586364</p>
+        <p>agent4@ai.system</p>
+        <div class="profile-icon">🤖</div>
+        <div class="button-group">
+          <button class="button view" onclick="showDashboard('Agent-4')">View Profile</button>
+          <button class="button alert">🚨</button>
+        </div>
+      </div>
+
+    
+    </div>
+    
+    </div>
+    
     </div>
   </section>
-
   <section id="dashboard-view" class="hidden">
     <button class="back-btn" onclick="goBack()">← Back</button>
     <div class="dashboard">
@@ -201,20 +216,24 @@
       <div class="ai-output" id="aiOutput">
         <em>Results will appear here...</em>
       </div>
-    </div>
-    <div class="ai-output hidden" id="blogOutput" style="margin-top: 30px;">
-      <h3>📝 Blog Written by Agent-2</h3>
-      <div id="blogContent"><em>Waiting for blog content...</em></div>
-      <div style="margin-top: 10px;">
-        <button class="button view" onclick="sendToAgent3()">Send to Agent-3 (SEO + Fact Check)</button>
+      <div class="ai-output hidden" id="blogOutput" style="margin-top: 30px;">
+        <h3>📝 Blog Written by Agent-2</h3>
+        <div id="blogContent"><em>Waiting for blog content...</em></div>
+        <div style="margin-top: 10px;">
+          <button class="button view" onclick="sendToAgent3()">Send to Agent-3 (SEO + Fact Check)</button>
+          <button class="button view" onclick="sendToAgent4()">Send to Agent-4 (Humanize Blog)</button>
+        </div>
       </div>
     </div>
+    
     <div class="ai-output hidden" id="seoOutput" style="margin-top: 30px;">
-  <h3>🔍 SEO + Fact Checked by Agent-3</h3>
-  <div id="seoContent"><em>Waiting for Agent-3 result...</em></div>
-</div>
-
-  </section>
+      <h3>🔍 SEO + Fact Checked by Agent-3</h3>
+      <div id="seoContent"><em>Waiting for Agent-3 result...</em></div>
+    </div>
+    <div class="ai-output hidden" id="finalOutput" style="margin-top: 30px;">
+      <h3>🧠 Humanized Blog by Agent-4</h3>
+      <div id="finalContent"><em>Waiting for Agent-4 rewrite...</em></div>
+    </div>
 
   <!-- JavaScript is already included below -->
 <script>
@@ -285,10 +304,8 @@ function sendToAgent2(index) {
   const topic = window.recentTopics[index];
   const length = document.getElementById("length").value;
   const tone = document.getElementById("tone").value;
-
   const blogContainer = document.getElementById("blogContent");
   const blogSection = document.getElementById("blogOutput");
-
   blogSection.classList.remove("hidden");
   blogContainer.innerHTML = "✍️ Agent-2 is writing the blog...";
 
@@ -297,31 +314,55 @@ function sendToAgent2(index) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ...topic, length, tone })
   })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success && data.blog) {
-      lastBlogData = data.blog;
-      blogContainer.innerHTML = `<pre style="white-space: pre-wrap;">${data.blog}</pre>`;
-    } else {
-      blogContainer.innerHTML = `<span style='color:red;'>Error: ${data.error || "Unknown error from Agent-2"}</span>`;
-    }
-  })
-  .catch(err => {
-    blogContainer.innerHTML = `<span style='color:red;'>Failed to generate blog: ${err.message}</span>`;
-  });
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && data.blog) {
+        lastBlogData = data.blog;
+        blogContainer.innerHTML = `<pre style="white-space: pre-wrap;">${data.blog}</pre>`;
+      } else {
+        blogContainer.innerHTML = `<span style='color:red;'>Error: ${data.error || "Unknown error from Agent-2"}</span>`;
+      }
+    })
+    .catch(err => {
+      blogContainer.innerHTML = `<span style='color:red;'>Failed to generate blog: ${err.message}</span>`;
+    });
 }
 
+function sendToAgent4() {
+  if (!lastBlogData) {
+    alert("No blog available. Please run Agent-2 or Agent-3 first.");
+    return;
+  }
+  const finalContainer = document.getElementById("finalContent");
+  const finalSection = document.getElementById("finalOutput");
+  finalSection.classList.remove("hidden");
+  finalContainer.innerHTML = "🧠 Agent-4 is crafting a human-style blog...";
+  fetch("http://127.0.0.1:8003/humanize-blog", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ blog: lastBlogData })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && data.result) {
+        finalContainer.innerHTML = `<pre style='white-space: pre-wrap;'>${data.result}</pre>`;
+      } else {
+        finalContainer.innerHTML = `<span style='color:red;'>Error: ${data.error || "Unknown error from Agent-4"}</span>`;
+      }
+    })
+    .catch(err => {
+      finalContainer.innerHTML = `<span style='color:red;'>Failed to rewrite blog: ${err.message}</span>`;
+    });
+}
 function sendToAgent3() {
   if (!lastBlogData) {
     alert("No blog content available. Please run Agent-2 first.");
     return;
   }
-
-const seoSection = document.getElementById("seoOutput");
-const seoContent = document.getElementById("seoContent");
-seoSection.classList.remove("hidden");
-seoContent.innerHTML = "🔍 Agent-3 is reviewing the blog...";
-
+  const seoSection = document.getElementById("seoOutput");
+  const seoContent = document.getElementById("seoContent");
+  seoSection.classList.remove("hidden");
+  seoContent.innerHTML = "🔍 Agent-3 is reviewing the blog...";
 
   fetch("http://127.0.0.1:8002/improve-blog", {
     method: "POST",
@@ -331,13 +372,13 @@ seoContent.innerHTML = "🔍 Agent-3 is reviewing the blog...";
     .then(res => res.json())
     .then(data => {
       if (data.success && data.result) {
-      seoContent.innerHTML = `<pre style="white-space: pre-wrap;">${data.result}</pre>`;
+        seoContent.innerHTML = `<pre style="white-space: pre-wrap;">${data.result}</pre>`;
       } else {
-        blogContainer.innerHTML = `<span style='color:red;'>Error: ${data.error || "Unknown error from Agent-3"}</span>`;
+        seoContent.innerHTML = `<span style='color:red;'>Error: ${data.error || "Unknown error from Agent-3"}</span>`;
       }
     })
     .catch(err => {
-      blogContainer.innerHTML = `<span style='color:red;'>Failed to improve blog: ${err.message}</span>`;
+      seoContent.innerHTML = `<span style='color:red;'>Failed to improve blog: ${err.message}</span>`;
     });
 }
 </script>
