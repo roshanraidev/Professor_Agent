@@ -1,4 +1,6 @@
 fastapi
-uvicorn
+uvicorn[standard]
 requests
 python-dotenv
+openai
+aiofiles          # for serving static files
