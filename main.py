@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -29,7 +29,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 def home():
     return FileResponse("static/index.html")
 
-# NewsAPI route
 class Topic(BaseModel):
     title: str
     summary: str
@@ -37,17 +36,24 @@ class Topic(BaseModel):
     source_link: str
 
 @app.get("/get-topics", response_model=List[Topic])
-def get_trending_topics(niche: str = Query(...)):
+def get_trending_topics(niche: str = Query(..., min_length=1)):
     from_date = (datetime.today() - timedelta(days=7)).strftime('%Y-%m-%d')
     to_date = datetime.today().strftime('%Y-%m-%d')
 
-    url = f"https://newsapi.org/v2/everything?q={niche}&from={from_date}&to={to_date}&sortBy=popularity&pageSize=10&apiKey={NEWS_API_KEY}"
+    url = (
+        f"https://newsapi.org/v2/everything?"
+        f"q={niche}&from={from_date}&to={to_date}&"
+        f"sortBy=popularity&pageSize=10&apiKey={NEWS_API_KEY}"
+    )
 
     response = requests.get(url)
+    if response.status_code != 200:
+        raise HTTPException(status_code=502, detail="Failed to fetch news from API")
+
     data = response.json()
 
     if data.get("status") != "ok":
-        return []
+        raise HTTPException(status_code=502, detail="News API returned an error")
 
     return [
         Topic(

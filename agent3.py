@@ -40,7 +40,7 @@ Meta Description:
 Corrections (if any):
 [List with explanation or 'None']
 ---
-    
+
 Blog:
 {data.blog}
 """
