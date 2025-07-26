@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import os
 from openai import OpenAI
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
@@ -11,10 +11,10 @@ api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=api_key)
 app = FastAPI()
 
-# Enable CORS so it can talk to your HTML/JS
+# Enable CORS so frontend can call your API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # consider restricting in production
     allow_methods=["*"],
     allow_headers=["*"]
 )
